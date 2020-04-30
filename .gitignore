@@ -130,5 +130,5 @@ dmypy.json
 .pyre/
 
 #Data
-Data/
+data/
 data_foot/
