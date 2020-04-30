@@ -1,3 +1,8 @@
+import os
+import logging
+import sys
+import argparse
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -5,7 +10,9 @@ from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import LabelEncoder
 
-df = pd.read_csv('data/data.csv' , encoding='latin-1')
+path = os.path.abspath('/Users/samuel/Desktop/football_stats/data/data.csv')
+
+df = pd.read_csv(path, encoding='latin-1')
 df = df.drop(columns = 'Unnamed: 0')
 
 def predict(model):
@@ -27,10 +34,14 @@ def predict(model):
 
     label = ['market_value']
 
+    logging.info("Loading data...")
+
     data = df[columns].dropna().reset_index(drop=True)
 
     X = data[features].dropna().reset_index(drop=True)
     Y = data[label].dropna().reset_index(drop=True)
+
+    logging.info("Computing one-hot-encoding...")
 
     categorical_feature_mask = X.dtypes == object
     categorical_cols = X.columns[categorical_feature_mask].tolist()
@@ -40,6 +51,8 @@ def predict(model):
 
     x_train, x_test = train_test_split(X, test_size=0.2, random_state=42)
     y_train, y_test = train_test_split(Y, test_size=0.2, random_state=42)
+
+    logging.info("Fitting the model...")
 
     regr = linear_model.LinearRegression()
 
@@ -56,8 +69,8 @@ def predict(model):
     # The coefficient of determination: 1 is perfect prediction
     print('Coefficient of determination: %.2f'
           % r2_score(np.array(y_test), y_pred))
-
-    return regr.coef_
+    logging.info("Finished !")
+    return
 
 def parse_args():
 
